@@ -245,12 +245,12 @@ console.log("itemsxxzz",items);
                   <span className={`${product.salePrice > 0 ? 'line-through' : ''} text-sm font-semibold text-muted-foreground`}>
                     {product.salePrice > 0 && (
                       <span className="text-sm font-semibold text-primary">
-                        ${product.salePrice}
+                        ${product.price}
                       </span>
                     )}
                   </span>
                   <span className="text-sm font-semibold text-primary">
-                    ${product.price}
+                    ${product.salePrice}
                   </span>
                 </div>
               </CardContent>

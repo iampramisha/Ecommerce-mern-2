@@ -74,11 +74,12 @@ export const createOrder = createAsyncThunk('order/createOrder', async ({ items,
 });
 
 // Async thunk to capture payment
-export const capturePayment = createAsyncThunk('order/capturePayment', async ({ paymentId, payerId, orderId }) => {
+export const capturePayment = createAsyncThunk('order/capturePayment', async ({ paymentId, payerId, orderId ,userId}) => {
     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/shop/order/capturePayment`, {
         paymentId,
         payerId,
         orderId,
+        userId
     });
     return response.data; // Return captured payment data (e.g., updated order)
 });

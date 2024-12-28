@@ -155,7 +155,18 @@ const loadCartFromLocalStorage = () => {
 const saveCartToLocalStorage = (cart) => {
   localStorage.setItem('cart', JSON.stringify(cart));
 };
-
+export const deleteCartItems = createAsyncThunk(
+  'cart/deleteCartItems',
+  async (userId, { rejectWithValue }) => {
+    try {
+      // Make a request to your backend to delete the cart items
+      const response = await axios.delete(`${BASE_URL}/${userId}/clear`);
+      return response.data; // The data returned from the backend, e.g., success message
+    } catch (error) {
+      return rejectWithValue(error.response.data); // Handle error if the request fails
+    }
+  }
+);
 // Async thunks for handling API calls
 export const addToCart = createAsyncThunk(
   'cart/addToCart',
@@ -291,7 +302,19 @@ const cartSlice = createSlice({
       .addCase(removeFromCart.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload?.message || action.payload;
+      })
+      .addCase(deleteCartItems.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteCartItems.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.cart = action.payload.cart; // Update cart with the cleared version
+      })
+      .addCase(deleteCartItems.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload.message; // Store error message
       });
+  
   },
 });
 

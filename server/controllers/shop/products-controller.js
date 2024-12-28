@@ -53,29 +53,36 @@ res.status(500).json({
     }
 }
 const getProductDetails = async (req, res) => {
-    try {
-      const productId = req.params.id;
-      const product = await Product.findById(productId);
-  
-      if (!product) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found"
-        });
-      }
-  
-      res.status(200).json({
-        success: true,
-        data: product
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
+  try {
+    const productId = req.params.id;
+
+    // Fetch product details along with the associated reviews
+    const product = await Product.findById(productId).populate({
+      path: 'reviews', // Assuming 'reviews' is a field that stores references to Review documents
+      populate: { path: 'user', select: 'name' } // Assuming each review references a user and we need their name
+    });
+
+    if (!product) {
+      return res.status(404).json({
         success: false,
-        message: "Some error occurred"
+        message: "Product not found"
       });
     }
-  };
+
+    res.status(200).json({
+      success: true,
+      data: product // This will include the product and its reviews
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred"
+    });
+  }
+};
+
+
 // Fetch all products (no filtering)
 const getAllProducts = async (req, res) => {
     try {

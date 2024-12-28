@@ -28,8 +28,8 @@ const ProductDetailDialog = ({ isOpen, onClose, product }) => {
             <div className="flex-shrink-0 w-2/5">
               <img
                 className="w-full max-h-[400px] object-cover shadow-lg rounded-lg"
-                src={product.data.image}
-                alt={product.data.title}
+                src={product.image}
+                alt={product.title}
               />
             </div>
 
@@ -38,17 +38,17 @@ const ProductDetailDialog = ({ isOpen, onClose, product }) => {
             <div className="flex-grow w-3/5">
               <div className="mb-4">
                 <div className='text-3xl font-bold mb-2'>
-                  {product.data.title}
+                  {product.title}
                 </div>
                 <p className="text-xl font-semibold text-muted-foreground">
-                  {product.data.title}
+                  {product.title}
                 </p>
                 <div className='flex flex-row justify-between mb-4'>
                   <p className="text-xl font-semibold line-through">
-                    ${product.data.salePrice}
+                    ${product.salePrice}
                   </p>
                   <p className="text-xl font-semibold text-black">
-                    ${product.data.price}
+                    ${product.price}
                   </p>
                 </div>
                 <div className='flex items-center mb-4'>
