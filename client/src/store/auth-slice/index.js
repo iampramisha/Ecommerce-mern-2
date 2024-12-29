@@ -7,9 +7,39 @@ import { fetchCartItems } from '../shop/cart-slice';
 
 const initialState={
     isAuthenticated: false,
+    favorites: [], 
     isLoading: true,
     user:null
 }
+export const addToFavorites = createAsyncThunk(
+  'user/addToFavorites',
+  async ({ userId, productId }, { rejectWithValue }) => {
+      try {
+          const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/favorites/add`, { userId, productId }, {
+              withCredentials: true,
+          });
+          return response.data; // Assuming response includes updated favorites list
+      } catch (error) {
+          return rejectWithValue(error.response.data); // Return error message
+      }
+  }
+);
+
+// Async thunk for removing a product from favorites
+export const removeFromFavorites = createAsyncThunk(
+  'user/removeFromFavorites',
+  async ({ userId, productId }, { rejectWithValue }) => {
+      try {
+          const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/favorites/remove`, { userId, productId }, {
+              withCredentials: true,
+          });
+          return response.data; // Assuming response includes updated favorites list
+      } catch (error) {
+          return rejectWithValue(error.response.data); // Return error message
+      }
+  }
+);
+
 //When you use createAsyncThunk, it automatically generates action creators for the three action states (pending, fulfilled, rejected) and manages their lifecycle.
 //registerUser becomes a thunk action creator. When you dispatch registerUser(formData), it runs the async function you provided, dispatches actions based on the promise state (pending, fulfilled, or rejected), and passes the result to the reducer.
 export const registerUser=createAsyncThunk('/auth/register',
@@ -141,11 +171,33 @@ const authSlice=createSlice({
               state.isLoading = false;
               state.user = null;
               state.isAuthenticated = false;
-            });
-        
-        }
-    }
-)
+            }) .addCase(addToFavorites.pending, (state) => {
+              state.isLoading = true;
+          })
+          .addCase(addToFavorites.fulfilled, (state, action) => {
+              state.isLoading = false;
+              state.favorites = action.payload.favorites; // Assuming the response includes updated favorites list
+          })
+          .addCase(addToFavorites.rejected, (state, action) => {
+              state.isLoading = false;
+              state.isError = true;
+              state.errorMessage = action.error.message;
+          })
 
+          .addCase(removeFromFavorites.pending, (state) => {
+              state.isLoading = true;
+          })
+          .addCase(removeFromFavorites.fulfilled, (state, action) => {
+              state.isLoading = false;
+              state.favorites = action.payload.favorites; // Assuming the response includes updated favorites list
+          })
+          .addCase(removeFromFavorites.rejected, (state, action) => {
+              state.isLoading = false;
+              state.isError = true;
+              state.errorMessage = action.error.message;
+          });
+  },
+});
+        
 export const {setUser}=authSlice.actions;
 export default authSlice.reducer;

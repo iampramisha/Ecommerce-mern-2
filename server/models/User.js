@@ -1,4 +1,6 @@
 const mongoose=require('mongoose');
+const { Product } = require('./Product');
+
 const UserSchema=new mongoose.Schema({
     userName:{
         type: String,
@@ -18,7 +20,8 @@ const UserSchema=new mongoose.Schema({
     role:{
         type: String,
      default:'user'
-    }
+    },
+     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
 })
 //creating model User suing schema
 const User=mongoose.model('User',UserSchema);

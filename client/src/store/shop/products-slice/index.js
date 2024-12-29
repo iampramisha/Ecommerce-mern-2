@@ -10,6 +10,19 @@ const initialState = {
     reviewList: [], // To store reviews
     error: null,
 };
+// Thunk for fetching products where salePrice is less than price
+export const fetchProductsSalePriceLessThanPrice = createAsyncThunk(
+  'shoppingProducts/fetchProductsSalePriceLessThanPrice',
+  async () => {
+    try {
+      const result = await axios.get(`${import.meta.env.VITE_API_URL}/api/shop/products/salePriceLessThanPrice`);
+      return result.data; // Return the data directly
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 // Thunk for fetching reviews
 export const getReviews = createAsyncThunk(
   'products/getReviews',
@@ -124,9 +137,12 @@ const shoppingProductSlice = createSlice({
           state.isReviewSubmitting = true;
       })
       .addCase(addReview.fulfilled, (state, action) => {
-          state.isReviewSubmitting = false;
-          state.reviewList.push(action.payload); // Add new review to the list
-      })
+        if (!state.reviewList) {
+            state.reviewList = []; // Fallback initialization
+        }
+        state.reviewList.push(action.payload); // Add new review to the list
+    })
+    
       .addCase(addReview.rejected, (state, action) => {
           state.isReviewSubmitting = false;
           state.error = action.error.message;
@@ -139,6 +155,20 @@ const shoppingProductSlice = createSlice({
       })
       .addCase(getReviews.rejected, (state, action) => {
         state.status = 'failed';
+        state.error = action.error.message;
+      }). addCase(fetchProductsSalePriceLessThanPrice.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      // Handle fetchProductsSalePriceLessThanPrice fulfilled
+      .addCase(fetchProductsSalePriceLessThanPrice.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productList = action.payload.data; // Adjust based on the response structure
+        state.error = null;
+      })
+      // Handle fetchProductsSalePriceLessThanPrice rejected
+      .addCase(fetchProductsSalePriceLessThanPrice.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.error.message;
       });
     }})

@@ -13,7 +13,7 @@ const AddressRouter =require('./routes/shop/address-routes')
 const OrderRouter =require('./routes/shop/order-routes');
 const AllOrderRouter =require('./routes/admin/order-routes')
 const directionsRouter = require('./routes/directions'); // Import the directions router
-
+const favoriteRouter= require('./routes/shop/favorite-routes'); // Import the directions router
 console.log('MongoDB URI:', process.env.DATABASE_URL);
 mongoose.connect(process.env.DATABASE_URL)
 .then(() => console.log('Connected to MongoDB'))
@@ -90,5 +90,6 @@ app.use('/api/shop/address',AddressRouter)
 app.use('/api/shop/order',OrderRouter)
 app.use('/api/admin/orders',AllOrderRouter)
 app.use('/api/directions', directionsRouter); // Use the directions router for /api/directions path
+app.use('/api/favorites', favoriteRouter); // Use the directions router for /api/directions path
 
 app.listen(PORT,()=>console.log(`server is running on port  ${PORT}`))

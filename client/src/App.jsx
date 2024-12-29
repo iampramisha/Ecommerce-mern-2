@@ -21,6 +21,7 @@ import { checkAuth } from './store/auth-slice'
 import { Skeleton } from "@/components/ui/skeleton"
 import PaypalReturn from './pages/shopping-view/paypal-return'
 import PaymentSuccessPage from './pages/shopping-view/paypal-cancel'
+import Sale from './pages/shopping-view/sale.jsx'
 export default function App() {
 
   const {user,isAuthenticated,isLoading}=useSelector(state=> state.auth);
@@ -78,6 +79,7 @@ export default function App() {
        <Route path='checkout' element={<ShoppingCheckout/>}/>
        <Route path='paypal-return' element={<PaypalReturn/>}/>
        <Route path='payment-success' element={<PaymentSuccessPage/>}/>
+       <Route path='/shop/sales' element={<Sale/>}/>
        
         </Route>
         <Route path='*' element={<NotFound/>}></Route>

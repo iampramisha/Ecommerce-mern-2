@@ -99,5 +99,31 @@ const getAllProducts = async (req, res) => {
         });
     }
 };
+const getProductsSalePriceLessThanPrice = async (req, res) => {
+  try {
+    // Fetch products where salePrice is less than price
+    const products = await Product.find({
+      salePrice: { $lt: '$price' }, // Compare salePrice with price field
+    });
 
-module.exports={getFilteredProducts, getProductDetails, getAllProducts}
+    if (!products.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No products found where salePrice is less than price",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: products
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred"
+    });
+  }
+};
+
+module.exports={getFilteredProducts, getProductDetails, getAllProducts,getProductsSalePriceLessThanPrice}

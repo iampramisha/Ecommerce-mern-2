@@ -150,6 +150,12 @@ export const shoppingViewHeaderMenuItems = [
     path: "/shop/listing",
   },
 
+  {
+    id: "sales", // New Sales menu item
+    label: "Sales",
+    path: "/shop/sales", // Path to the sales page
+  },
+
 ];
 
 export const categoryOptionsMap = {
