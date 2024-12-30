@@ -96,6 +96,7 @@ const shoppingProductSlice = createSlice({
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.productList = action.payload.data; // Correctly assign the data from payload
+        state.selectedProduct.push(action.payload.data);
         state.error = null;
     })
       .addCase(fetchAllProducts.rejected, (state, action) => {

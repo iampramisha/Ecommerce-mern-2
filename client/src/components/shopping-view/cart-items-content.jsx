@@ -421,6 +421,7 @@ const CartItemsContent = ({ items, showCheckOutButton }) => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const { isLoading } = useSelector((state) => state.products);
+  
     const { toast } = useToast(); // Get the toast function
 
     const userId = user.id;
