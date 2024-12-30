@@ -139,7 +139,10 @@
 // }
 
 // export default ShoppingproductTile;
-import React from 'react';
+
+
+
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -149,10 +152,10 @@ import { addToCart } from '@/store/shop/cart-slice';
 import { useToast } from '@/hooks/use-toast';
 import ProductDetailDialog from './productDetailsmodel';
 import { Heart } from 'lucide-react';
-import { addToFavorites, removeFromFavorites } from '@/store/auth-slice';
-import { useState } from 'react';
+import { addToFavorites, removeFromFavorites, fetchFavorites } from '@/store/auth-slice';
 
 function ShoppingproductTile({ product }) {
+  
     const dispatch = useDispatch();
     const { toast } = useToast();
     const { user } = useSelector((state) => state.auth);
@@ -163,7 +166,15 @@ function ShoppingproductTile({ product }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState(null);
 
-    const isFavorite = favorites.includes(product._id); // Use favorites from Redux directly
+    const isFavorite = favorites?.includes(product._id)
+    ;
+
+
+    useEffect(() => {
+        if (userId) {
+            dispatch(fetchFavorites(userId));
+        }
+    }, [dispatch]);
 
     const handleGetProductDetails = (productId) => {
         setSelectedProductId(productId);
@@ -209,11 +220,21 @@ function ShoppingproductTile({ product }) {
         e.stopPropagation();
         if (isFavorite) {
             dispatch(removeFromFavorites({ userId, productId: product._id }));
+            toast({
+                title: 'Removed from Favorites',
+                description: `${product?.title} has been removed from your favorites.`,
+                status: 'success',
+            });
         } else {
             dispatch(addToFavorites({ userId, productId: product._id }));
+            toast({
+                title: 'Added to Favorites',
+                description: `${product?.title} has been added to your favorites.`,
+                status: 'success',
+            });
         }
     };
-
+    
     return (
         <div>
             <Card
@@ -230,7 +251,7 @@ function ShoppingproductTile({ product }) {
                                 className="object-cover w-full h-full rounded-t-lg"
                                 width={300}
                                 height={300}
-                                loading="lazy"
+                                // loading="lazy"
                             />
                         </div>
 

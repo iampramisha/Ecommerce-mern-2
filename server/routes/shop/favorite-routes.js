@@ -1,6 +1,8 @@
 const express = require('express');
-const { addToFavorites, removeFromFavorites } = require('../../controllers/shop/favorite-controller');
+const { getFavorites,removeFromFavorites, addToFavorites } = require('../../controllers/shop/favorite-controller');
+
 const router = express.Router();
+router.get('/getFavorite/:userId', getFavorites);
 
 // Route to add product to favorites
 router.post('/add', addToFavorites);

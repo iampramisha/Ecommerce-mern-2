@@ -146,7 +146,7 @@ import { fetchCartItems } from '@/store/shop/cart-slice';
 import { checkAuth, logoutUser } from '@/store/auth-slice';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from 'lucide-react';
+import { Heart, HousePlug, LogOut, Menu, ShoppingCart, UserCog } from 'lucide-react';
 import { Label } from '../ui/label';
 
 function ShoppingViewHeader() {
@@ -158,40 +158,6 @@ function ShoppingViewHeader() {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (user?.id) {
-  //     dispatch(fetchCartItems(user.id));
-  //   }
-  // }, [dispatch, user?.id]);
-
-  // Monitor the status of the cart fetching
-  // useEffect(() => {
-  //   if (status === 'succeeded' || status === 'failed') {
-  //     setLoading(false); // Stop loading when cart fetching completes
-  //   }
-  // }, [status]);
-
-  // function handleLogout() {
-  //   dispatch(logoutUser());
-  //   sessionStorage.removeItem("filters");
-  //   navigate('/auth/login');
-  // }
-  // function handleNavigate(getCurrentMenuItem, section) {
-  //   sessionStorage.removeItem("filters"); // Clear previous filters first
-    
-  //   let currentFilter = null;
-  
-  //   // If the menu item is not 'home', set the category filter
-  //   if (getCurrentMenuItem.id !== 'home'  && getCurrentMenuItem.id !== 'products') {
-  //     currentFilter = {
-  //       category: [getCurrentMenuItem.id]
-  //     };
-  //     sessionStorage.setItem('filters', JSON.stringify(currentFilter)); // Store the filter
-  //   }
-  
-  //   // Navigate to the desired path
-  //   navigate(getCurrentMenuItem.path);
-  // }
   const handleLogout = async () => {
     await dispatch(logoutUser()); // Ensure logout completes
 
@@ -236,10 +202,20 @@ function ShoppingViewHeader() {
   //   // Navigate to the desired path
   //   navigate(getCurrentMenuItem.path);
   // }
-
   function HeaderRightContent() {
     return (
-      <div className='flex flex-row lg:items-center lg:flex-row  gap-4'>
+      <div className='flex flex-row lg:items-center lg:flex-row gap-4'>
+        {/* Favorites Icon */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => navigate('/shop/favorites')}
+        >
+          <Heart className="w-6 h-6 text-gray-600 hover:text-red-500" />
+          <span className="sr-only">Favorites</span>
+        </Button>
+  
+        {/* Cart Icon */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
@@ -247,15 +223,13 @@ function ShoppingViewHeader() {
               <span className="sr-only">User Cart</span>
             </Button>
           </SheetTrigger>
-
+  
           <SheetContent>
-            {/* Show loading spinner or message while cart is being fetched */}
-      
-              <CartWrapper cartItems={items} showCheckOutButton={true} />
-       
+            <CartWrapper cartItems={items} showCheckOutButton={true} />
           </SheetContent>
         </Sheet>
-
+  
+        {/* User Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="bg-black w-10 h-10 rounded-full flex items-center justify-center">
@@ -264,7 +238,7 @@ function ShoppingViewHeader() {
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-
+  
           <DropdownMenuContent
             side="right"
             className="w-56 z-50 flex flex-col bg-white border border-gray-200 shadow-lg rounded-md mr-2"
@@ -287,6 +261,7 @@ function ShoppingViewHeader() {
       </div>
     );
   }
+
 
   return (
     <header className='sticky top-0 z-40 w-full border-b bg-background'>

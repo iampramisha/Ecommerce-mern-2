@@ -11,6 +11,21 @@ const initialState={
     isLoading: true,
     user:null
 }
+
+export const fetchFavorites = createAsyncThunk(
+  'auth/fetchFavorites',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/favorites/getFavorite/${userId}`);
+      
+      return response.data.favorites; // Assuming the response contains an array of favorite product IDs
+    } catch (error) {
+      console.log(error);  // Log the error before rejecting
+      return rejectWithValue(error.response?.data || 'Failed to fetch favorites');
+    }
+  }
+);
+
 export const addToFavorites = createAsyncThunk(
   'user/addToFavorites',
   async ({ userId, productId }, { rejectWithValue }) => {
@@ -195,9 +210,21 @@ const authSlice=createSlice({
               state.isLoading = false;
               state.isError = true;
               state.errorMessage = action.error.message;
-          });
+          }).addCase(fetchFavorites.pending, (state) => {
+            // state.isLoading = true;
+            state.error = null;
+        })
+        .addCase(fetchFavorites.fulfilled, (state, action) => {
+            // state.isLoading = false;
+            state.favorites = action.payload;
+        })
+        .addCase(fetchFavorites.rejected, (state, action) => {
+            // state.isLoading = false;
+            state.error = action.payload;
+        });
   },
 });
         
+
 export const {setUser}=authSlice.actions;
 export default authSlice.reducer;
