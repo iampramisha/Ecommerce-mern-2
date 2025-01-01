@@ -14,11 +14,12 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function ShoppingHome() {
   const dispatch = useDispatch();
-  const { productList, isLoading, error } = useSelector((state) => state.shopProducts);
+  const productList = useSelector(state => state.shopProducts.productList);
+   
   const navigate = useNavigate(); // React Router hook to handle navigation
   const [isDialogOpen, setDialogOpen] = useState(false); // Track whether the dialog is open
   const [selectedProduct, setSelectedProduct] = useState(null); 
-  
+  console.log("productLisssswwwwtt,",productList)
       const { user } = useSelector((state) => state.auth);
   const {toast}=useToast();
   useEffect(() => {

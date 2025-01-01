@@ -4,9 +4,10 @@ import axios from "axios";
 const initialState = {
      name: 'shoppingProducts',
     productList: [],
-    selectedProduct: null,
+    selectedProduct: [], 
     isLoading: false,
     isReviewSubmitting: false,
+    favoriteProducts: [], 
     reviewList: [], // To store reviews
     error: null,
 };
