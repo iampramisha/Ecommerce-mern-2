@@ -324,7 +324,8 @@ function AdminProducts() {
   const dispatch = useDispatch();
   const { toast } = useToast();
   const products = useSelector((state) => state.products.products);
-
+const {user}=useSelector((state)=>state.auth);
+const adminId=user?.id;
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -369,7 +370,7 @@ function AdminProducts() {
         });
       } else {
         // Dispatch addProduct if adding a new product
-        actionResult = await dispatch(addProduct(productData)).unwrap();
+        actionResult = await dispatch(addProduct({productData,adminId})).unwrap();
   
         // Directly show success toast
         toast({

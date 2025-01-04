@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/upload-image", upload.single("my_file"), handleImageUpload);
 
 // Route for creating a product (with image URL and product data)
-router.post("/create", createProduct);
+router.post("/create/:adminId", createProduct);
 
 // Route for getting all products
 router.get("/list", getProducts);

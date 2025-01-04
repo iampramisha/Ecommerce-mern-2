@@ -27,7 +27,7 @@ res.json({
  const createProduct = async (req, res) => {
   try {
     const { image, title, description, category, brand, price, salePrice, totalStock,weight } = req.body;
-
+    const { adminId } = req.params;
     // Create new product
     const product = new Product({
       image,
@@ -38,7 +38,8 @@ res.json({
       price,
       salePrice,
       totalStock,
-      weight
+      weight,
+      adminId
     });
 
     // Save the product

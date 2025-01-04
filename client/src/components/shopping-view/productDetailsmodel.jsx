@@ -648,6 +648,7 @@ import { Input } from '../ui/input';
 // import { ChatIcon } from 'lucide-react'; // Add this import for the chat icon
 import ChatBox from './chatBox';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useNavigate } from 'react-router-dom';
 const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
     const [product, setProduct] = useState(null);
     const [rating, setRating] = useState(0);
@@ -658,7 +659,11 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const userId = user?.id;
+    const navigate = useNavigate();
 
+    const handleChatNavigation = () => {
+      navigate('/shop/chat');
+    };
     // Fetch product details
     useEffect(() => {
         if (productId) {
@@ -826,7 +831,7 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
   <Tooltip>
     <TooltipTrigger>
     <button
-  onClick={toggleChat}
+onClick={handleChatNavigation}
   className="bg-white text-black p-3 rounded-full shadow-lg flex items-center justify-center ml-2"
 >
   <MessageCircle className="h-8 w-8" /> {/* Adjust size here */}
@@ -846,11 +851,11 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
 </div>
 
                     {/* Chat Box (Example) */}
-                    {isChatOpen && (
-                        <div className="fixed bottom-16 right-5 bg-white p-4 shadow-lg w-80 h-64 border rounded-lg">
+                    {/* {isChatOpen && (
+                        <div  className="fixed bottom-16 right-5 bg-white p-4 shadow-lg w-80 h-64 border rounded-lg">
                         <ChatBox/>
                         </div>
-                    )}
+                    )} */}
                 </DialogContent>
             </DialogPortal>
         </Dialog>
