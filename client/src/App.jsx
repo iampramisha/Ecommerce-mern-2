@@ -81,7 +81,7 @@ export default function App() {
        <Route path='paypal-return' element={<PaypalReturn/>}/>
        <Route path='payment-success' element={<PaymentSuccessPage/>}/>
        <Route path='/shop/sales' element={<Sale/>}/>
-       <Route path='chat' element={<ChatPage />} />
+       <Route path='chat/:productId/:chatId' element={<ChatPage />} />
 
        
         </Route>

@@ -4,9 +4,11 @@ import axios from 'axios';
 // Define the async thunk for adding a product
 export const addProduct = createAsyncThunk(
   'products/addProduct',
-  async ({ productData, adminId }, { rejectWithValue }) => {
+  async ({ productData, adminId,adminName }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/products/create/${adminId}`, productData);
+      const data = { ...productData, adminName };
+
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/products/create/${adminId}`, data);
       return response.data; // Return the data if successful
     } catch (error) {
       return rejectWithValue(error.response.data); // Return the error data if there's an issue

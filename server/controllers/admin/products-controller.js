@@ -1,7 +1,7 @@
 
 const { imageUploadutil } = require("../../helpers/cloudinary");
 const { Product } = require("../../models/Product");
-
+const { User } = require("../../models/User");
 
 
 
@@ -26,9 +26,9 @@ res.json({
 // @route   POST /api/products
  const createProduct = async (req, res) => {
   try {
-    const { image, title, description, category, brand, price, salePrice, totalStock,weight } = req.body;
+    const { image, title, description, category, brand, price, salePrice, totalStock,weight,adminName } = req.body;
     const { adminId } = req.params;
-    // Create new product
+  
     const product = new Product({
       image,
       title,
@@ -39,7 +39,8 @@ res.json({
       salePrice,
       totalStock,
       weight,
-      adminId
+      adminId,
+      adminName
     });
 
     // Save the product

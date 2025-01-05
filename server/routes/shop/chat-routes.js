@@ -7,12 +7,13 @@ const { startOrFetchChat, sendMessage, getChatMessages, getUserChats } = require
 router.post('/start', startOrFetchChat);
 
 // Send a Message in an Existing Chat
-router.post('/:chatId/messages', sendMessage);
+// Route to send a message
+router.post('/send/:productId/:userId/:chatId', sendMessage);
 
 // Get All Messages in a Chat
 router.get('/:chatId/messages', getChatMessages);
 
 // Get All Chats for a User
-router.get('/user', getUserChats);
+router.get('/:userId/chats', getUserChats);
 
 module.exports = router;

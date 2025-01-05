@@ -37,11 +37,18 @@ const productSchema = new mongoose.Schema(
     },
     weight: {
       type: Number,
+    },
+    adminId: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User',
       required: true,
     },
-    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    adminName: {
+      type: String, // Added here within the schema fields
+      required: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true } // Moved this outside the schema fields
 );
 
 // Virtual field to populate reviews

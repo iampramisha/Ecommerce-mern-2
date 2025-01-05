@@ -643,12 +643,14 @@ import StarRating from './starRating';
 import { addReview, fetchProductDetails, getReviews } from '@/store/shop/products-slice';
 import { addToCart } from '@/store/shop/cart-slice';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '../ui/input';
 // import { ChatIcon } from 'lucide-react'; // Add this import for the chat icon
 import ChatBox from './chatBox';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useNavigate } from 'react-router-dom';
+import { getUserChats, startNewChat } from '@/store/shop/chat-slice';
 const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
     const [product, setProduct] = useState(null);
     const [rating, setRating] = useState(0);
@@ -660,10 +662,46 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
     const { user } = useSelector((state) => state.auth);
     const userId = user?.id;
     const navigate = useNavigate();
-
-    const handleChatNavigation = () => {
-      navigate('/shop/chat');
+    const handleChatNavigation = async (productId) => {
+        try {
+            setLoading(true);
+    
+            // Step 1: Fetch all chats for the user
+            let existingChats = [];
+            try {
+                const response = await dispatch(getUserChats(userId)).unwrap();
+                existingChats = response?.chats || []; // Default to an empty array if no chats
+            } catch (error) {
+                console.warn("No chats found or error fetching chats:", error);
+            }
+    
+            // Step 2: Check if a chat exists for this product
+            const chatExists = existingChats.find(chat =>
+                chat.product._id === productId &&
+                chat.participants.some(participant => participant._id === userId)
+            );
+    
+            if (chatExists) {
+                // Step 3: Navigate to the existing chat
+                console.log("Chat exists:", chatExists);
+                navigate(`/shop/chat/${productId}/${chatExists.chatId}`);
+            } else {
+                // Step 4: Create a new chat
+                console.log("No chat exists. Creating a new chat...");
+                const chatData = await dispatch(startNewChat({ productId, buyerId: userId })).unwrap();
+                const chatId = chatData.chatId;
+                console.log("New chat created:", chatData);
+                navigate(`/shop/chat/${productId}/${chatId}`);
+            }
+    
+            setLoading(false);
+        } catch (error) {
+            console.error("Failed to handle chat navigation:", error);
+            setLoading(false);
+        }
     };
+    
+    
     // Fetch product details
     useEffect(() => {
         if (productId) {
@@ -831,7 +869,7 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
   <Tooltip>
     <TooltipTrigger>
     <button
-onClick={handleChatNavigation}
+  onClick={() => handleChatNavigation(product._id)}
   className="bg-white text-black p-3 rounded-full shadow-lg flex items-center justify-center ml-2"
 >
   <MessageCircle className="h-8 w-8" /> {/* Adjust size here */}
