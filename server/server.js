@@ -109,6 +109,7 @@ const AllOrderRouter = require('./routes/admin/order-routes');
 const directionsRouter = require('./routes/directions');
 const favoriteRouter = require('./routes/shop/favorite-routes');
 const chatRouter = require('./routes/shop/chat-routes');
+const chatRoutes = require('./routes/admin/chat-route'); // Import the chat routes
 
 console.log('MongoDB URI:', process.env.DATABASE_URL);
 mongoose.connect(process.env.DATABASE_URL)
@@ -193,6 +194,7 @@ app.use('/api/admin/orders', AllOrderRouter);
 app.use('/api/directions', directionsRouter);
 app.use('/api/favorites', favoriteRouter);
 app.use('/api/chats', chatRouter);
+app.use('/api/chats', chatRoutes);
 
 // Start the server
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

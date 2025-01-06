@@ -8,6 +8,8 @@ import orderSlice from "./shop/order-slice"
 import ordersSlice from "./admin/order-slice"
 import distanceSlice from "./shop/distance-slice"; // Import the distance slice
 import chatSlice from "./shop/chat-slice"; // Import the distance slice
+import chatsSlice from "./admin/chat-slice"; // Import the distance slice
+
 
 const store = configureStore({
     reducer: {
@@ -20,7 +22,8 @@ const store = configureStore({
         order:orderSlice,
         allOrder:ordersSlice,
 distance:distanceSlice,
-chat:chatSlice
+chat:chatSlice,
+chats:chatsSlice,
     }
 });
 
