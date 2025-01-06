@@ -35,11 +35,11 @@ const ChatBox = () => {
     }
   }, [dispatch, productId]);
   // Fetch messages for the selected chat on component mount or chatId change
-  // useEffect(() => {
-  //   if (chatId) {
-  //     dispatch(getChatMessages(chatId)); // Fetch messages for the selected chat
-  //   }
-  // }, [dispatch, chatId]); // Dependency only on chatId, re-run when chatId changes
+  useEffect(() => {
+    if (chatId) {
+      dispatch(getChatMessages(chatId)); // Fetch messages for the selected chat
+    }
+  }, [dispatch, chatId]); // Dependency only on chatId, re-run when chatId changes
 
   // Get the recipient's username (from the first message or chat data)
   // const recipient = currentMessages?.length > 0 ? currentMessages[0].sender?.userName : ' ';

@@ -649,7 +649,8 @@ import { Input } from '../ui/input';
 // import { ChatIcon } from 'lucide-react'; // Add this import for the chat icon
 import ChatBox from './chatBox';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+;
 import { getUserChats, startNewChat } from '@/store/shop/chat-slice';
 const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
     const [product, setProduct] = useState(null);
@@ -670,23 +671,28 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
             let existingChats = [];
             try {
                 const response = await dispatch(getUserChats(userId)).unwrap();
-                existingChats = response?.chats || []; // Default to an empty array if no chats
+                console.log("Fetched response:", JSON.stringify(response, null, 2)); // Log entire response
+    
+                existingChats = response || [];
+                console.log("Existing chats array:", existingChats); // Log the chats array
             } catch (error) {
                 console.warn("No chats found or error fetching chats:", error);
             }
     
             // Step 2: Check if a chat exists for this product
-            const chatExists = existingChats.find(chat =>
-                chat.product._id === productId &&
+            const chatExists = existingChats.find(chat => 
+                chat.product && chat.product._id === productId &&
                 chat.participants.some(participant => participant._id === userId)
             );
     
+            console.log("Chat exists check:", chatExists); // Log the result of the check
+    
             if (chatExists) {
-                // Step 3: Navigate to the existing chat
+                // If chat exists, navigate to the existing chat
                 console.log("Chat exists:", chatExists);
                 navigate(`/shop/chat/${productId}/${chatExists.chatId}`);
             } else {
-                // Step 4: Create a new chat
+                // If no chat exists, create a new chat
                 console.log("No chat exists. Creating a new chat...");
                 const chatData = await dispatch(startNewChat({ productId, buyerId: userId })).unwrap();
                 const chatId = chatData.chatId;
@@ -700,6 +706,9 @@ const ProductDetailDialog = ({ isOpen, onClose, productId }) => {
             setLoading(false);
         }
     };
+                
+    
+
     
     
     // Fetch product details
