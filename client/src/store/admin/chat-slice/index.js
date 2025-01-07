@@ -8,6 +8,23 @@ export const fetchChatsForSeller = createAsyncThunk('chat/fetchChatsForSeller', 
     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/chats/${sellerId}`);
     return response.data.chats; // Assuming the response has a 'chats' field
 });
+export const sendSellerMessage = createAsyncThunk(
+    "chat/sendSellerMessage",
+    async ({ chatId, sellerId, text}, { rejectWithValue }) => {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/chats/${sellerId}/${chatId}`,
+          { text } // Send the replyToMessageId along with the text
+        );
+        return response.data; // Return the data from the API response
+      } catch (error) {
+        return rejectWithValue(
+          error.response?.data?.message || "Failed to send seller message"
+        );
+      }
+    }
+  );
+  
 
 const chatSlice = createSlice({
     name: 'chat',
@@ -35,7 +52,22 @@ const chatSlice = createSlice({
             .addCase(fetchChatsForSeller.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message; // Handle error if API request fails
-            });
+            }) .addCase(sendSellerMessage.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+              })
+              .addCase(sendSellerMessage.fulfilled, (state, action) => {
+                state.loading = false;
+                const { chatId, data } = action.payload;
+                if (state.currentChat?.id === chatId) {
+                  state.currentChat.messages = data.messages; // Assuming data contains updated messages
+                }
+              })
+              
+              .addCase(sendSellerMessage.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+              });
     },
 });
 

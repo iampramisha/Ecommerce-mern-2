@@ -149,7 +149,8 @@ export default function FavoriteComponent({ favoriteItems }) {
                   <div className="w-full mt-4">
                     {product?.totalStock > 0 ? (
                       <Button 
-                        className="w-full bg-blue-300 text-black hover:bg-blue-200 transition-colors duration-200" 
+                        className="w-full bg-blue-300 text-black
+                         hover:bg-blue-200 transition-colors duration-200" 
                         onClick={() => handleAddToCart(product)}
                       >
                         Add to cart

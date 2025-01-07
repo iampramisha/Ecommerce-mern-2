@@ -1,3 +1,303 @@
+// import React, { useEffect, useState, useRef } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useParams } from "react-router-dom";
+// import { getChatMessages } from "@/store/shop/chat-slice";
+// import { User, Reply } from "lucide-react";
+// import salesBanner from "@/assets/salesBanner.jpg";
+// import { sendSellerMessage } from "@/store/admin/chat-slice";
+
+// const SellerChatBox = () => {
+//   const dispatch = useDispatch();
+//   const { currentMessages, status } = useSelector((state) => state.chat);
+//   const { user } = useSelector((state) => state.auth);
+//   const [newMessage, setNewMessage] = useState("");
+//   const [replyToMessage, setReplyToMessage] = useState(null);
+
+//   const { chatId } = useParams();
+//   const sellerId = user?.id;
+//   const sellerRole = user?.role;
+
+//   const messagesEndRef = useRef(null);
+
+//   useEffect(() => {
+//     if (chatId) {
+//       dispatch(getChatMessages(chatId));
+//     }
+//   }, [dispatch, chatId]);
+
+//   useEffect(() => {
+//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [currentMessages]);
+
+//   const handleSendMessage = () => {
+//     if (newMessage.trim() && sellerId) {
+//       const replyMessageId = replyToMessage ? replyToMessage._id : null;
+//       dispatch(
+//         sendSellerMessage({ chatId, sellerId, text: newMessage, replyToMessageId: replyMessageId })
+//       ).then(() => {
+//         setNewMessage("");
+//         setReplyToMessage(null);
+//         dispatch(getChatMessages(chatId));
+//       });
+//     }
+//   };
+
+//   const handleReplyClick = (message) => {
+//     setReplyToMessage(message);
+//   };
+
+//   if (status === "loading") {
+//     return <div>Loading...</div>;
+//   }
+
+//   return (
+//     <div className="flex w-full h-full flex-col md:flex-row bg-gray-50">
+//       <div className="flex flex-col w-full h-[670px] md:w-1/2 p-4 pl-10">
+//         <div className="text-xl font-semibold mb-4 flex flex-row items-center space-x-3">
+//           <div className="bg-gray-100 p-2 rounded-full">
+//             <User className="h-6 w-8" />
+//           </div>
+//           <span className="flex items-center">{user?.userName || "Seller"}</span>
+//         </div>
+
+//         <div className="flex-1 p-4 overflow-y-auto space-y-4">
+//           {currentMessages?.length > 0 ? (
+//             currentMessages.map((msg, index) => {
+//               const isSender = msg.sender?._id === sellerId;
+//               const messageClass = isSender
+//                 ? "ml-auto bg-blue-800 text-white"
+//                 : "bg-gray-200 text-black";
+
+//               return (
+//                 <div
+//                   key={index}
+//                   className={`flex w-full ${isSender ? "justify-end" : "justify-start"}`}
+//                 >
+//                   <div
+//                     className={`inline-block max-w-[50%] rounded-lg break-words leading-6 ${messageClass} px-3 py-2`}
+//                     style={{ width: "fit-content" }}
+//                   >
+//                     {/* Display the replied-to message if exists */}
+//                     {msg.replyToMessage && (
+//                       <p className="mb-2 bg-gray-100 p-2 rounded text-sm text-gray-600">
+//                         Replied to: {msg.replyToMessage.text}
+//                       </p>
+//                     )}
+
+//                     <p>{msg.text}</p>
+
+//                     {!isSender && (
+//                       <button
+//                         onClick={() => handleReplyClick(msg)}
+//                         className="ml-2 text-blue-500 hover:text-blue-700"
+//                       >
+//                         <Reply className="h-5 w-5" />
+//                       </button>
+//                     )}
+//                   </div>
+//                 </div>
+//               );
+//             })
+//           ) : (
+//             <div className="text-center text-gray-500">
+//               <p>No messages yet. Start a conversation!</p>
+//             </div>
+//           )}
+
+//           <div ref={messagesEndRef} />
+//         </div>
+
+//         {sellerRole === "admin" && (
+//           <div className="flex items-center mt-4 space-x-2">
+//             {replyToMessage && (
+//               <div className="mb-2 text-sm text-gray-600">
+//                 <p>Replying to: "{replyToMessage.text}"</p>
+//               </div>
+//             )}
+//             <input
+//               type="text"
+//               value={newMessage}
+//               onChange={(e) => setNewMessage(e.target.value)}
+//               placeholder="Reply to the buyer..."
+//               className="w-full p-3 rounded-md border border-gray-300 text-sm"
+//             />
+//             <button
+//               onClick={handleSendMessage}
+//               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+//             >
+//               Send
+//             </button>
+//           </div>
+//         )}
+//       </div>
+
+//       <div className="hidden sm:block sm:w-1/2 h-full mt-10 rounded-lg overflow-hidden">
+//         <img
+//           src={salesBanner}
+//           alt="Sales Banner"
+//           className="w-full h-full rounded-xl object-cover"
+//           style={{
+//             height: "50vh",
+//             borderRadius: "40% 60% 30% 50%",
+//           }}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SellerChatBox;
+// import React, { useEffect, useState, useRef } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useParams } from "react-router-dom";
+// import { getChatMessages } from "@/store/shop/chat-slice";
+// import { User, Reply } from "lucide-react";
+// import salesBanner from "@/assets/salesBanner.jpg";
+// import { sendSellerMessage } from "@/store/admin/chat-slice";
+
+// const SellerChatBox = () => {
+//   const dispatch = useDispatch();
+//   const { currentMessages, status } = useSelector((state) => state.chat);
+//   const { user } = useSelector((state) => state.auth);
+//   const [newMessage, setNewMessage] = useState("");
+//   const [replyToMessage, setReplyToMessage] = useState(null);
+
+//   const { chatId } = useParams();
+//   const sellerId = user?.id;
+//   const sellerRole = user?.role;
+
+//   const messagesEndRef = useRef(null);
+
+//   useEffect(() => {
+//     if (chatId) {
+//       dispatch(getChatMessages(chatId));
+//     }
+//   }, [dispatch, chatId]);
+
+//   useEffect(() => {
+//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [currentMessages]);
+
+//   const handleSendMessage = () => {
+//     if (newMessage.trim() && sellerId) {
+//       const replyMessageId = replyToMessage ? replyToMessage._id : null;
+//       dispatch(
+//         sendSellerMessage({
+//           chatId,
+//           sellerId,
+//           text: newMessage,
+//           replyToMessageId: replyMessageId, // Include this only if replying
+//         })
+//       ).then(() => {
+//         setNewMessage("");
+//         setReplyToMessage(null);
+//         dispatch(getChatMessages(chatId)); // Refetch messages
+//       });
+//     }
+//   };
+  
+
+//   const handleReplyClick = (message) => {
+//     setReplyToMessage(message);
+//   };
+
+//   if (status === "loading") {
+//     return <div>Loading...</div>;
+//   }
+
+//   return (
+//     <div className="flex w-full h-full flex-col md:flex-row bg-gray-50">
+//       <div className="flex flex-col w-full h-[670px] md:w-1/2 p-4 pl-10">
+//         <div className="text-xl font-semibold mb-4 flex flex-row items-center space-x-3">
+//           <div className="bg-gray-100 p-2 rounded-full">
+//             <User className="h-6 w-8" />
+//           </div>
+//           <span className="flex items-center">{user?.userName || "Seller"}</span>
+//         </div>
+
+//         <div className="flex-1 p-4 overflow-y-auto space-y-4">
+//           {currentMessages?.length > 0 ? (
+//             currentMessages.map((msg, index) => {
+//               const isSender = msg.sender?._id === sellerId;
+//               const messageClass = isSender
+//                 ? "ml-auto bg-blue-800 text-white"
+//                 : "bg-gray-200 text-black";
+
+//               return (
+//                 <div
+//                   key={index}
+//                   className={`flex w-full ${isSender ? "justify-end" : "justify-start"}`}
+//                 >
+//                   <div
+//                     className={`inline-block max-w-[50%] rounded-lg break-words leading-6 ${messageClass} px-3 py-2 flex flex-col`}
+//                     style={{ width: "fit-content" }}
+//                   >
+//                     {/* Display the replied-to message if exists */}
+//                     {msg.replyToMessage && (
+//                       <p className="mb-2 bg-gray-100 p-2 rounded text-sm text-gray-600">
+//                          {msg.replyToMessage.text}
+//                       </p>
+//                     )}
+
+//                     <p>{msg.text}</p>
+
+//                     {!isSender && (
+//                       <button
+//                         onClick={() => handleReplyClick(msg)}
+//                         className="ml-2 text-blue-500 hover:text-blue-700"
+//                       >
+//                         <Reply className="h-5 w-5" />
+//                       </button>
+//                     )}
+//                   </div>
+//                 </div>
+//               );
+//             })
+//           ) : (
+//             <div className="text-center text-gray-500">
+//               <p>No messages yet. Start a conversation!</p>
+//             </div>
+//           )}
+
+//           <div ref={messagesEndRef} />
+//         </div>
+
+      
+//           <div className="flex items-center mt-4 space-x-2">
+         
+//             <input
+//               type="text"
+//               value={newMessage}
+//               onChange={(e) => setNewMessage(e.target.value)}
+//               placeholder="Reply to the buyer..."
+//               className="w-full p-3 rounded-md border border-gray-300 text-sm"
+//             />
+//             <button
+//               onClick={handleSendMessage}
+//               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+//             >
+//               Send
+//             </button>
+//           </div>
+      
+//       </div>
+
+//       <div className="hidden sm:block sm:w-1/2 h-full mt-10 rounded-lg overflow-hidden">
+//         <img
+//           src={salesBanner}
+//           alt="Sales Banner"
+//           className="w-full h-full rounded-xl object-cover"
+//           style={{
+//             height: "50vh",
+//             borderRadius: "40% 60% 30% 50%",
+//           }}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SellerChatBox;
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom'; 

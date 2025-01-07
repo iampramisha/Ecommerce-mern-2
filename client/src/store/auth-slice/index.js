@@ -191,7 +191,7 @@ const authSlice=createSlice({
           })
           .addCase(addToFavorites.fulfilled, (state, action) => {
               state.isLoading = false;
-              state.favorites = action.payload.favorites; // Assuming the response includes updated favorites list
+              state.favorites = action.payload; // Assuming the response includes updated favorites list
           })
           .addCase(addToFavorites.rejected, (state, action) => {
               state.isLoading = false;

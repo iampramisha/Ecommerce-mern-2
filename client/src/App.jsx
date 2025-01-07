@@ -23,6 +23,7 @@ import PaypalReturn from './pages/shopping-view/paypal-return'
 import PaymentSuccessPage from './pages/shopping-view/paypal-cancel'
 import Sale from './pages/shopping-view/sale.jsx'
 import ChatPage from './pages/shopping-view/chat'
+import Chat from './pages/admin-view/chat'
 export default function App() {
 
   const {user,isAuthenticated,isLoading}=useSelector(state=> state.auth);
@@ -65,7 +66,10 @@ export default function App() {
           <Route path='feature' element={<AdminFeatures/>} />
           <Route path='orders' element={<AdminOrders/>} />
           <Route path='products' element={<AdminProducts/>} />
+          <Route path="chat/:chatId" element={<Chat/>} />
         </Route>
+
+
         <Route path='/shop' element={
           <CheckAuth  isAuthenticated={isAuthenticated} user={user}>
 

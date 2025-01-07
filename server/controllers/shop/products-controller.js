@@ -96,6 +96,7 @@ const getAllProducts = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Some error occurred"
+            
         });
     }
 };
