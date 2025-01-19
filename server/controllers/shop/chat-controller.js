@@ -161,7 +161,7 @@ const getChatMessages = async (req, res) => {
     }
 };
 
-// Get All Chats for a User
+// Get All Chats for a UserZZ
 const getUserChats = async (req, res) => {
     try {
         const {userId} = req.params; // Get the logged-in user's ID

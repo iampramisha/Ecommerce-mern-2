@@ -4,26 +4,41 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Thunk to fetch chats for a seller
+
+export const getChatMessages = createAsyncThunk(
+    'chat/getChatMessages',
+    async (chatId) => {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/chats/${chatId}`);
+      return response.data.chat;  // Assuming the response returns the chat data
+    }
+  );
 export const fetchChatsForSeller = createAsyncThunk('chat/fetchChatsForSeller', async (sellerId) => {
     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/chats/${sellerId}`);
     return response.data.chats; // Assuming the response has a 'chats' field
 });
 export const sendSellerMessage = createAsyncThunk(
-    "chat/sendSellerMessage",
-    async ({ chatId, sellerId, text}, { rejectWithValue }) => {
-      try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/chats/${sellerId}/${chatId}`,
-          { text } // Send the replyToMessageId along with the text
-        );
-        return response.data; // Return the data from the API response
-      } catch (error) {
-        return rejectWithValue(
-          error.response?.data?.message || "Failed to send seller message"
-        );
-      }
+  "chat/sendSellerMessage",
+  async ({ chatId, sellerId, text, repliedMessage}, { rejectWithValue }) => {
+    try {
+      // Log the chatId to the console
+      console.log("Sending message to chat with ID:", chatId);
+
+      // Making the API request
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/chats/${sellerId}/${chatId}`,
+        { text, repliedMessage } // Send both text and the repliedMessage ID (if any)
+      );
+      
+      return response.data; // Return the data from the API response
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to send seller message"
+      );
     }
-  );
+  }
+);
+
+
   
 
 const chatSlice = createSlice({
@@ -67,7 +82,18 @@ const chatSlice = createSlice({
               .addCase(sendSellerMessage.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-              });
+              })
+              .addCase(getChatMessages.pending, (state) => {
+                state.status = 'loading';
+              })
+              .addCase(getChatMessages.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.currentMessages = action.payload.messages;
+              })
+              .addCase(getChatMessages.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+              })
     },
 });
 
