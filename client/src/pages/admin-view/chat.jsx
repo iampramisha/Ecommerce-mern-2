@@ -459,7 +459,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getChatMessages } from "@/store/shop/chat-slice";
 import { sendSellerMessage } from "@/store/admin/chat-slice";
-import { User, CornerDownLeft, Copy } from "lucide-react"; // Import reply icon
+import { User, CornerDownLeft, Copy, X } from "lucide-react"; // Import reply icon
 import salesBanner from "@/assets/salesBanner.jpg";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -536,91 +536,95 @@ const SellerChatBox = () => {
           </span>
         </div>
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
-          {currentMessages?.length > 0 ? (
-            currentMessages.map((msg, index) => {
-              const isSender = msg.sender?._id === sellerId;
-              const messageClass = isSender
-                ? "ml-auto bg-blue-800 text-white"
-                : "bg-gray-200 text-black";
+      {currentMessages?.length > 0 ? (
+  currentMessages.map((msg, index) => {
+    const isSender = msg.sender?._id === sellerId;
+    const messageClass = isSender
+      ? "ml-auto bg-blue-800 text-white"
+      : "bg-gray-200 text-black";
 
-              return (
-                <div
-                  key={index}
-                  className={`flex w-full ${isSender ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`inline-block max-w-[50%] rounded-lg break-words leading-6 ${messageClass} px-3 py-2 relative  mb-6`}
-                    style={{ width: "fit-content" }}
-                    onClick={() => handleMessageClick(msg._id)}  // Show icons on message click
-                  >
-                    {msg.repliedTo && (
-                      <div className="text-xs text-gray-400 mb-2">
-                        <p>Replied to: {msg.repliedTo.text}</p>
-                      </div>
-                    )}
-                    <p>{msg.text}</p>
+    return (
+      <div
+        key={index}
+        className={`flex w-full ${isSender ? "justify-end" : "justify-start"}`}
+      >
+        <div className="w-fit max-w-[50%] mb-6 relative">
+          {/* Message Content */}
+          <div
+            className={`inline-block rounded-lg break-words leading-6 ${messageClass} px-3 py-2`}
+            onClick={() => handleMessageClick(msg._id)}
+          >
+            {msg.repliedTo && (
+              <div className="text-xs text-gray-400 mb-2">
+                <p>Replied to: {msg.repliedTo.text}</p>
+              </div>
+            )}
+            <p>{msg.text}</p>
+          </div>
 
-                    {/* Tooltip for reply icon */}
-                    {showIcons === msg._id && (
-        <div className={`absolute ${isSender ? 'bottom-5' : 'bottom-2'} right-2 flex items-center space-x-2 mt-4`}>
+          {/* Icons Exactly Below */}
+          {showIcons === msg._id && (
+            <div className="flex justify-center mt-2 space-x-2">
+              {/* Reply Icon */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <button
+                      onClick={() => handleReply(msg._id, msg.text)}
+                      className={`bg-gray-400 text-white hover:bg-gray-700 p-2 rounded-full`}
+                    >
+                      <CornerDownLeft className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Reply</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
-                        <TooltipProvider  className="bg-gray-300">
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <button
-                                onClick={() => handleReply(msg._id, msg.text)}
-                                className={`text-gray-600 hover:text-blue-600 ${isSender ? 'text-white' : ''}`}
-                              >
-                                <CornerDownLeft className="w-4 h-4" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Reply</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        
-                        {/* Copy icon */}
-                        <TooltipProvider  className="bg-gray-300">
-                          <Tooltip>
-                            <TooltipTrigger>
-                        <button
-                          onClick={() => handleCopy(msg.text)}
-                          className={`text-gray-600 hover:text-blue-600 ${isSender ? 'text-white' : ''}`}
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                        </TooltipTrigger>
-                            <TooltipContent>
-                              <p >Copy</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-center text-gray-500">
-              <p>No messages yet. Start a conversation!</p>
+              {/* Copy Icon */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <button
+                      onClick={() => handleCopy(msg.text)}
+                      className={`bg-gray-400 text-white hover:bg-gray-700 p-2 rounded-full`}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           )}
+        </div>
+      </div>
+    );
+  })
+) : (
+  <div className="text-center text-gray-500">
+    <p>No messages yet. Start a conversation!</p>
+  </div>
+)}
+
+
           <div ref={messagesEndRef} />
         </div>
         {sellerRole === "admin" && (
           <div className="flex flex-col items-start mt-4 space-y-2 w-full">
             {repliedMessage && (
-              <div className="text-sm text-gray-500 mb-2 w-full">
+              <div className="text-sm text-gray-500 mb-2 w-full flex items-center justify-between">
                 <span>
                   Replying to: <strong>{repliedMessage.text}</strong>
                 </span>
                 <button
                   onClick={() => setRepliedMessage(null)}
-                  className="text-red-600 text-xs ml-2"
+                  className="text-black-600 text-xs ml-2"
                 >
-                  Cancel
+              <X className="text-black-600"/>
                 </button>
               </div>
             )}
