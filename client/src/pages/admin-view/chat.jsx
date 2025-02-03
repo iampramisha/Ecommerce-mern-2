@@ -453,7 +453,6 @@
 // };
 
 // export default SellerChatBox;
-
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -471,6 +470,7 @@ const SellerChatBox = () => {
   const [repliedMessage, setRepliedMessage] = useState(null); // Track the replied message
   const [tooltipVisible, setTooltipVisible] = useState(null); // Track if tooltip should be visible for a message
   const [showIcons, setShowIcons] = useState(null); // Track if icons should be shown for a specific message
+  const [highlightedMessageId, setHighlightedMessageId] = useState(null); // Track the message being highlighted
   const { chatId } = useParams();
   const sellerId = user?.id;
   const sellerRole = user?.role;
@@ -515,13 +515,21 @@ const SellerChatBox = () => {
     // Toggle the visibility of icons on click
     setShowIcons((prevId) => (prevId === msgId ? null : msgId));
   };
-  
+
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text).then(() => {
       alert("Message copied to clipboard!");
     }).catch((err) => {
       console.error("Error copying text: ", err);
     });
+  };
+
+  const handleRepliedToClick = (msgId) => {
+    setHighlightedMessageId(msgId); // Set the message to be highlighted
+    const element = document.getElementById(msgId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   };
 
   return (
@@ -536,80 +544,93 @@ const SellerChatBox = () => {
           </span>
         </div>
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
-      {currentMessages?.length > 0 ? (
-  currentMessages.map((msg, index) => {
-    const isSender = msg.sender?._id === sellerId;
-    const messageClass = isSender
-      ? "ml-auto bg-blue-800 text-white"
-      : "bg-gray-200 text-black";
+          {currentMessages?.length > 0 ? (
+            currentMessages.map((msg, index) => {
+              const isSender = msg.sender?._id === sellerId;
+              const messageClass = isSender
+                ? "ml-auto bg-blue-800 text-white"
+                : "bg-gray-200 text-black";
 
-    return (
-      <div
-        key={index}
-        className={`flex w-full ${isSender ? "justify-end" : "justify-start"}`}
-      >
-        <div className="w-fit max-w-[50%] mb-6 relative">
-          {/* Message Content */}
-          <div
-            className={`inline-block rounded-lg break-words leading-6 ${messageClass} px-3 py-2`}
-            onClick={() => handleMessageClick(msg._id)}
-          >
-            {msg.repliedTo && (
-              <div className="text-xs text-gray-400 mb-2">
-                <p>Replied to: {msg.repliedTo.text}</p>
-              </div>
-            )}
-            <p>{msg.text}</p>
-          </div>
+                const messageStyles = {
+                  backgroundColor: highlightedMessageId === msg._id ? "#93C5FD" : "", // Light blue color for bg-blue-300
+                };
+                
 
-          {/* Icons Exactly Below */}
-          {showIcons === msg._id && (
-            <div className="flex justify-center mt-2 space-x-2">
-              {/* Reply Icon */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <button
-                      onClick={() => handleReply(msg._id, msg.text)}
-                      className={`bg-gray-400 text-white hover:bg-gray-700 p-2 rounded-full`}
+              return (
+                <div
+                  key={index}
+                  className={`flex w-full ${isSender ? "justify-end" : "justify-start"}`}
+                >
+                  <div className="w-fit max-w-[50%] mb-6 relative" id={msg._id}>
+                    {/* Message Content */}
+                    <div
+                      className={`inline-block rounded-lg break-words leading-6 ${messageClass} px-3 py-2`}
+                      onClick={() => handleMessageClick(msg._id)}
+                      style={messageStyles}
                     >
-                      <CornerDownLeft className="w-4 h-4" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Reply</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                      {msg.repliedTo && (
+                        <div className="text-xs text-gray-400 mb-2">
+                          <p>
+                            Replied to:{" "}
+                            <span
+                              className="text-gray-400 cursor-pointer"
+                              onClick={() => handleRepliedToClick(msg.repliedTo.id)}
+                            >
+                              {msg.repliedTo.text}
+                            </span>
+                          </p>
+                        </div>
+                      )}
+                      <p>{msg.text}</p>
+                    </div>
 
-              {/* Copy Icon */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <button
-                      onClick={() => handleCopy(msg.text)}
-                      className={`bg-gray-400 text-white hover:bg-gray-700 p-2 rounded-full`}
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Copy</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                    {/* Icons Exactly Below */}
+                    {showIcons === msg._id && (
+                      <div className="flex justify-center mt-2 space-x-2">
+                        {/* Reply Icon */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <button
+                                onClick={() => handleReply(msg._id, msg.text)}
+                                className={`bg-gray-400 text-white hover:bg-gray-700 p-2 rounded-full`}
+                              >
+                                <CornerDownLeft className="w-4 h-4" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Reply</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        {/* Copy Icon */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <button
+                                onClick={() => handleCopy(msg.text)}
+                                className={`bg-gray-400 text-white hover:bg-gray-700 p-2 rounded-full`}
+                              >
+                                <Copy className="w-4 h-4" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Copy</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-center text-gray-500">
+              <p>No messages yet. Start a conversation!</p>
             </div>
           )}
-        </div>
-      </div>
-    );
-  })
-) : (
-  <div className="text-center text-gray-500">
-    <p>No messages yet. Start a conversation!</p>
-  </div>
-)}
-
 
           <div ref={messagesEndRef} />
         </div>
@@ -624,7 +645,7 @@ const SellerChatBox = () => {
                   onClick={() => setRepliedMessage(null)}
                   className="text-black-600 text-xs ml-2"
                 >
-              <X className="text-black-600"/>
+                  <X className="text-black-600" />
                 </button>
               </div>
             )}
