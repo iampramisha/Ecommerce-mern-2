@@ -531,8 +531,13 @@ const SellerChatBox = () => {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+  
+    // Remove highlight after 3 seconds
+    setTimeout(() => {
+      setHighlightedMessageId(null);
+    }, 6000);
   };
-
+  
   return (
     <div className="flex w-full h-full flex-col md:flex-row bg-gray-50">
       <div className="flex flex-col w-full h-[670px] md:w-1/2 p-4 pl-10">
@@ -565,10 +570,11 @@ const SellerChatBox = () => {
                   <div className="w-fit max-w-[50%] mb-6 relative" id={msg._id}>
                     {/* Message Content */}
                     <div
-                      className={`inline-block rounded-lg break-words leading-6 ${messageClass} px-3 py-2`}
-                      onClick={() => handleMessageClick(msg._id)}
-                      style={messageStyles}
-                    >
+  className={`inline-block rounded-lg break-words whitespace-pre-wrap leading-6 ${messageClass} px-3 py-2 w-full max-w-xs md:max-w-sm`}
+  onClick={() => handleMessageClick(msg._id)}
+  style={messageStyles}
+>
+
                       {msg.repliedTo && (
                         <div className="text-xs text-gray-400 mb-2">
                           <p>
@@ -638,17 +644,18 @@ const SellerChatBox = () => {
         {sellerRole === "admin" && (
           <div className="flex flex-col items-start mt-4 space-y-2 w-full">
             {repliedMessage && (
-              <div className="text-sm text-gray-500 mb-2 w-full flex items-center justify-between">
-                <span>
-                  Replying to: <strong>{repliedMessage.text}</strong>
-                </span>
-                <button
-                  onClick={() => setRepliedMessage(null)}
-                  className="text-black-600 text-xs ml-2"
-                >
-                  <X className="text-black-600" />
-                </button>
-              </div>
+           <div className="text-sm text-gray-500 mb-2 w-full flex items-center justify-between">
+           <span className="flex items-center space-x-2">
+             Replying to: <strong className="max-w-sm truncate">{repliedMessage.text}</strong>
+           </span>
+           <button
+             onClick={() => setRepliedMessage(null)}
+             className="text-black-600 text-xs ml-2"
+           >
+             <X className="text-black-600" />
+           </button>
+         </div>
+         
             )}
             <div className="flex items-center space-x-2 w-full">
               <input
