@@ -64,72 +64,66 @@ const startOrFetchChat = async (req, res) => {
     });
   }
 };
+
 const sendMessage = async (req, res) => {
-  try {
-      const {productId ,userId, chatId } = req.params; 
-      const { text } = req.body; // Now also include productId in the request body
-
-      // Validate if the chat exists
-      const chat = await Chat.findOne({ chatId });
-      if (!chat) {
-          return res.status(404).json({
-              success: false,
-              message: "Chat not found",
-          });
-      }
-
-      // Validate the message text
-      if (!text || text.trim().length === 0) {
-          return res.status(400).json({
-              success: false,
-              message: "Message text cannot be empty",
-          });
-      }
-
-      // Fetch the product details to get the adminId (seller)
-      const product = await Product.findById(productId);
-      if (!product) {
-          return res.status(404).json({
-              success: false,
-              message: "Product not found",
-          });
-      }
-
-      const adminId = product.adminId; // Admin ID (the seller) for this product
-
-      // Add the new message to the chat
-      const newMessage = {
-          sender: userId, // Buyer is the sender
-          text,
-          isSender: true, // Mark as sender (buyer)
-      };
-
-      // Add the new message to the chat
-      chat.messages.push(newMessage);
-      await chat.save();
-
-      // Add the isSender flag to each message in the chat
-      const updatedChat = chat.toObject(); // Convert mongoose document to a plain object
-      updatedChat.messages = updatedChat.messages.map(message => ({
-          ...message,
-          isSender: message.sender.toString() === userId, // Check if the message sender matches the userId (buyer)
-      }));
-
-      // Respond with the updated chat and include the seller's adminId
-      res.status(200).json({
-          success: true,
-          chatId: chat.chatId, // Return chatId with the response
-          sellerId: adminId,  // Send the adminId (seller)
-          data: updatedChat,
-      });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({
-          success: false,
-          message: "Some error occurred while sending the message",
-      });
-  }
-};
+    try {
+        const { productId, userId, chatId } = req.params; 
+        const { text, repliedMessage } = req.body; // Include repliedMessage in request body
+  
+        // Validate if the chat exists
+        const chat = await Chat.findOne({ chatId });
+        if (!chat) {
+            return res.status(404).json({
+                success: false,
+                message: "Chat not found",
+            });
+        }
+  
+        // Validate the message text
+        if (!text || text.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Message text cannot be empty",
+            });
+        }
+  
+        // Fetch the product details to get the adminId (seller)
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
+  
+        // Prepare the new message object with repliedTo
+        const newMessage = {
+            sender: userId,
+            text,
+            isSender: true,
+            repliedTo: repliedMessage ? { id: repliedMessage.id, text: repliedMessage.text } : null, // Include repliedTo
+        };
+  
+        // Add the new message to the chat
+        chat.messages.push(newMessage);
+        await chat.save();
+  
+        // Respond with the updated chat
+        res.status(200).json({
+            success: true,
+            chatId: chat.chatId,
+            sellerId: product.adminId,
+            data: chat,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Some error occurred while sending the message",
+        });
+    }
+  };
+  
 
 // Get All Messages in a Chat
 const getChatMessages = async (req, res) => {

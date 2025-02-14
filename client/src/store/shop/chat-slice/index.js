@@ -136,23 +136,26 @@ export const getChatMessages = createAsyncThunk('chat/fetchMessages', async (cha
 
 // Send a message
 // Update the sendMessage action to include isSender flag
-export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ userId, chatId, text,productId }, thunkAPI) => {
-  if (!chatId) {
-    return thunkAPI.rejectWithValue('chatId is required');
-  }
+export const sendMessage = createAsyncThunk(
+  'chat/sendMessage',
+  async ({ userId, chatId, text, productId, repliedMessage }, thunkAPI) => {
+    if (!chatId) {
+      return thunkAPI.rejectWithValue('chatId is required');
+    }
 
-  try {
-    const response = await axios.post(`${BASE_URL}/api/chats/send/${productId}/${userId}/${chatId}`, { text });
-    const messageData = response.data.data; // Assuming the response returns the message object
-
-    // Add the isSender flag to the response data
-    messageData.isSender = messageData.sender._id === userId;
-    
-    return messageData;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to send message');
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/chats/send/${productId}/${userId}/${chatId}`, 
+        { text, repliedMessage } // Send repliedMessage too
+      );
+      
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to send message');
+    }
   }
-});
+);
+
 
 const chatSlice = createSlice({
   name: 'chat',
