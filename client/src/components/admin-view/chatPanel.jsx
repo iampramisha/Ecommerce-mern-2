@@ -121,6 +121,8 @@ const ChatPanel = ({ isOpen, onClose, chats, loading }) => {
         // Check if the date is yesterday
         if (
             messageDate.getDate() === yesterday.getDate() &&
+
+            
             messageDate.getMonth() === yesterday.getMonth() &&
             messageDate.getFullYear() === yesterday.getFullYear()
         ) {
