@@ -453,7 +453,6 @@
 // };
 
 // export default SellerChatBox;
-
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -462,6 +461,7 @@ import { sendSellerMessage } from "@/store/admin/chat-slice";
 import { User, CornerDownLeft, Copy, X } from "lucide-react"; // Import reply icon
 import salesBanner from "@/assets/salesBanner.jpg";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { fetchProductDetails } from "@/store/shop/products-slice"; // Import fetchProductDetails
 
 const SellerChatBox = () => {
   const dispatch = useDispatch();
@@ -472,51 +472,79 @@ const SellerChatBox = () => {
   const [tooltipVisible, setTooltipVisible] = useState(null); // Track if tooltip should be visible for a message
   const [showIcons, setShowIcons] = useState(null); // Track if icons should be shown for a specific message
   const [highlightedMessageId, setHighlightedMessageId] = useState(null); // Track the message being highlighted
-  const { chatId } = useParams();
+  const [productDetails, setProductDetails] = useState(null); // Store product details
+  const { chatId, productId } = useParams(); // Extract productId from URL params
   const sellerId = user?.id;
   const sellerRole = user?.role;
   const messagesEndRef = useRef(null);
 
+  // Fetch product details
+  useEffect(() => {
+    if (productId) {
+      dispatch(fetchProductDetails(productId))
+        .then((response) => {
+          const product = response.payload?.data;
+          setProductDetails({ // Store product details
+            title: product?.title,
+            image: product?.image,
+          });
+        })
+        .catch((error) => console.error("Error fetching product details:", error));
+    }
+  }, [dispatch, productId]);
+
+  // Fetch chat messages
   useEffect(() => {
     if (chatId) {
       dispatch(getChatMessages(chatId));
     }
   }, [dispatch, chatId]);
 
+  // Scroll to the bottom of the chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
 
+  // Handle sending a message
   const handleSendMessage = () => {
     if (newMessage.trim() && sellerId) {
+      // Include product title and image in the payload
+      const productTitle = productDetails?.title || 'Product not found';
+      const productImage = productDetails?.image || '';
+
       dispatch(
         sendSellerMessage({
           chatId,
           sellerId,
           text: newMessage,
-          repliedMessage: repliedMessage,  // This should be an object with { id, text }
+          productTitle, // Include product title
+          productImage, // Include product image
+          repliedMessage: repliedMessage, // Include replied message
         })
       )
         .then(() => {
           setNewMessage("");
           setRepliedMessage(null); // Clear the replied message after sending
-          dispatch(getChatMessages(chatId));
+          dispatch(getChatMessages(chatId)); // Refresh chat messages
         })
         .catch((error) => console.error("Error sending message:", error));
     }
   };
 
+  // Handle replying to a message
   const handleReply = (msgId, msgText) => {
     setRepliedMessage({ id: msgId, text: msgText });
     setTooltipVisible(null); // Hide the tooltip after reply
     setShowIcons(null); // Hide the icons when the message is replied
   };
 
+  // Handle clicking on a message
   const handleMessageClick = (msgId) => {
     // Toggle the visibility of icons on click
     setShowIcons((prevId) => (prevId === msgId ? null : msgId));
   };
 
+  // Handle copying a message
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text).then(() => {
       alert("Message copied to clipboard!");
@@ -525,19 +553,20 @@ const SellerChatBox = () => {
     });
   };
 
+  // Handle clicking on a replied message
   const handleRepliedToClick = (msgId) => {
     setHighlightedMessageId(msgId); // Set the message to be highlighted
     const element = document.getElementById(msgId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  
+
     // Remove highlight after 3 seconds
     setTimeout(() => {
       setHighlightedMessageId(null);
     }, 6000);
   };
-  
+
   return (
     <div className="flex w-full h-full flex-col md:flex-row bg-gray-50">
       <div className="flex flex-col w-full h-[670px] md:w-1/2 p-4 pl-10">
@@ -557,10 +586,9 @@ const SellerChatBox = () => {
                 ? "ml-auto bg-blue-800 text-white"
                 : "bg-gray-200 text-black";
 
-                const messageStyles = {
-                  backgroundColor: highlightedMessageId === msg._id ? "#93C5FD" : "", // Light blue color for bg-blue-300
-                };
-                
+              const messageStyles = {
+                backgroundColor: highlightedMessageId === msg._id ? "#93C5FD" : "", // Light blue color for bg-blue-300
+              };
 
               return (
                 <div
@@ -570,11 +598,10 @@ const SellerChatBox = () => {
                   <div className="w-fit max-w-[50%] mb-6 relative" id={msg._id}>
                     {/* Message Content */}
                     <div
-  className={`inline-block rounded-lg break-words whitespace-pre-wrap leading-6 ${messageClass} px-3 py-2 w-full max-w-xs md:max-w-sm`}
-  onClick={() => handleMessageClick(msg._id)}
-  style={messageStyles}
->
-
+                      className={`inline-block rounded-lg break-words whitespace-pre-wrap leading-6 ${messageClass} px-3 py-2 w-full max-w-xs md:max-w-sm`}
+                      onClick={() => handleMessageClick(msg._id)}
+                      style={messageStyles}
+                    >
                       {msg.repliedTo && (
                         <div className="text-xs text-gray-400 mb-2">
                           <p>
@@ -644,18 +671,17 @@ const SellerChatBox = () => {
         {sellerRole === "admin" && (
           <div className="flex flex-col items-start mt-4 space-y-2 w-full">
             {repliedMessage && (
-           <div className="text-sm text-gray-500 mb-2 w-full flex items-center justify-between">
-           <span className="flex items-center space-x-2">
-             Replying to: <strong className="max-w-sm truncate">{repliedMessage.text}</strong>
-           </span>
-           <button
-             onClick={() => setRepliedMessage(null)}
-             className="text-black-600 text-xs ml-2"
-           >
-             <X className="text-black-600" />
-           </button>
-         </div>
-         
+              <div className="text-sm text-gray-500 mb-2 w-full flex items-center justify-between">
+                <span className="flex items-center space-x-2">
+                  Replying to: <strong className="max-w-sm truncate">{repliedMessage.text}</strong>
+                </span>
+                <button
+                  onClick={() => setRepliedMessage(null)}
+                  className="text-black-600 text-xs ml-2"
+                >
+                  <X className="text-black-600" />
+                </button>
+              </div>
             )}
             <div className="flex items-center space-x-2 w-full">
               <input

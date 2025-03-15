@@ -126,14 +126,16 @@ const sendMessage = async (req, res) => {
   
 
 // Get All Messages in a Chat
+// Get All Messages in a Chat
 const getChatMessages = async (req, res) => {
     try {
         const { chatId } = req.params;
 
-        // Find the chat by chatId and populate the sender's information
+        // Find the chat by chatId and populate the sender's information and product details
         const chat = await Chat.findOne({ chatId })
             .populate('messages.sender', 'userName') // Populate the sender's username in messages
-            .populate('participants', 'userName'); // Populate participants' usernames
+            .populate('participants', 'userName') // Populate participants' usernames
+            .populate('product', 'title image'); // Populate product title and image
 
         if (!chat) {
             return res.status(404).json({
@@ -142,9 +144,20 @@ const getChatMessages = async (req, res) => {
             });
         }
 
+        // Extract product title and image from the product
+        const productTitle = chat.product?.title || 'Product not found';
+        const productImage = chat.product?.image || '';
+
+        // Map messages to include product title and image
+        const messagesWithProductDetails = chat.messages.map((message) => ({
+            ...message.toObject(),
+            productTitle, // Include product title
+            productImage, // Include product image
+        }));
+
         res.status(200).json({
             success: true,
-            data: chat.messages,
+            data: messagesWithProductDetails, // Send messages with product details
         });
     } catch (error) {
         console.error(error);
@@ -154,8 +167,8 @@ const getChatMessages = async (req, res) => {
         });
     }
 };
-
 // Get All Chats for a UserZZ
+
 const getUserChats = async (req, res) => {
     try {
         const {userId} = req.params; // Get the logged-in user's ID

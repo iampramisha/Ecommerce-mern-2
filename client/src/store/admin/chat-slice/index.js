@@ -4,7 +4,21 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Thunk to fetch chats for a seller
-
+export const deleteChat = createAsyncThunk(
+  'chat/deleteChat',
+  async (chatId, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/chats/${chatId}`
+      );
+      return response.data; // Return the deleted chat ID
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to delete chat'
+      );
+    }
+  }
+);
 export const getChatMessages = createAsyncThunk(
     'chat/getChatMessages',
     async (chatId) => {
@@ -18,7 +32,7 @@ export const fetchChatsForSeller = createAsyncThunk('chat/fetchChatsForSeller', 
 });
 export const sendSellerMessage = createAsyncThunk(
   "chat/sendSellerMessage",
-  async ({ chatId, sellerId, text, repliedMessage}, { rejectWithValue }) => {
+  async ({ chatId, sellerId, text, productTitle, productImage, repliedMessage }, { rejectWithValue }) => {
     try {
       // Log the chatId to the console
       console.log("Sending message to chat with ID:", chatId);
@@ -26,9 +40,14 @@ export const sendSellerMessage = createAsyncThunk(
       // Making the API request
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/chats/${sellerId}/${chatId}`,
-        { text, repliedMessage } // Send both text and the repliedMessage ID (if any)
+        { 
+          text, 
+          productTitle, // Include product title
+          productImage, // Include product image
+          repliedMessage // Include replied message
+        }
       );
-      
+
       return response.data; // Return the data from the API response
     } catch (error) {
       return rejectWithValue(
@@ -93,7 +112,21 @@ const chatSlice = createSlice({
               .addCase(getChatMessages.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
+              }) .addCase(deleteChat.pending, (state) => {
+                state.loading = true;
               })
+              .addCase(deleteChat.fulfilled, (state, action) => {
+                state.loading = false;
+                const deletedChatId = action.payload; // Assuming the API returns the deleted chat ID
+                state.chats = state.chats.filter(chat => chat.id !== deletedChatId); // Remove the deleted chat from the list
+                if (state.currentChat?.id === deletedChatId) {
+                  state.currentChat = null; // Clear the current chat if it was deleted
+                }
+              })
+              .addCase(deleteChat.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload; // Handle error if deletion fails
+              });
     },
 });
 
