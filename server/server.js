@@ -3,8 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const http = require('http');
 const path = require('path'); // Add this line to fix the "path not defined" error
+const http = require('http');
 const { Server } = require('socket.io');
 const socketSetup = require('./socket-server'); // Import the socket server setup
 
@@ -100,7 +100,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Routes
 app.use('/api/auth', authRouter);
 app.use('/api/admin/products', adminProductsRouter);
 app.use('/api/shop/products', shopProductsRouter);
@@ -115,7 +117,7 @@ app.use('/api/chats', chatRoutes);
 
 // Handle React routing, return all requests to React app
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Root route for testing

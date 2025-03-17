@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: ecommerce-mern
+    name: ecommerce-backend
     env: node
     buildCommand: |
-      cd ecommerce/client && npm install && npm run build
+      cd client && npm install && npm run build
       cd ../server && npm install
-    startCommand: node ecommerce/server/server.js
-    staticDir: Ecommerce/client/dist
+    startCommand: node server/server.js
+    staticDir: client/dist
