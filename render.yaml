@@ -3,7 +3,7 @@ services:
     name: ecommerce-mern
     env: node
     buildCommand: |
-      cd client && npm install && npm run build
+      cd ecommerce/client && npm install && npm run build
       cd ../server && npm install
-    startCommand: node server/server.js
-    staticDir: client/dist
+    startCommand: node ecommerce/server/server.js
+    staticDir: Ecommerce/client/dist
