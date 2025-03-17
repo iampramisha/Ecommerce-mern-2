@@ -52,6 +52,7 @@ const allowedOrigins = [
     'http://localhost:5173', // Local frontend
     'https://ecommerce-mern-8.onrender.com', // Example frontend URL
     'https://ecommerce-mern-7-rixe.onrender.com', // Example frontend URL
+    'https://ecommerce-mern-2-165.onrender.com'
 ];
 
 app.use(cors({
