@@ -1,10 +1,10 @@
 require('dotenv').config(); // Load environment variables from .env file
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const http = require('http');
+const path = require('path'); // Add this line to fix the "path not defined" error
 const { Server } = require('socket.io');
 const socketSetup = require('./socket-server'); // Import the socket server setup
 
@@ -31,13 +31,6 @@ mongoose.connect(process.env.DATABASE_URL)
 
 // Initialize Express app
 const app = express();
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-
-// Handle React routing, return all requests to React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
-});
 const PORT = process.env.PORT || 5000;
 
 // Create HTTP server
@@ -59,7 +52,7 @@ const allowedOrigins = [
     'http://localhost:5173', // Local frontend
     'https://ecommerce-mern-8.onrender.com', // Example frontend URL
     'https://ecommerce-mern-7-rixe.onrender.com', // Example frontend URL
-    'https://ecommerce-mern-2-165.onrender.com'
+    'https://ecommerce-mern-2-165.onrender.com' // Your live frontend URL
 ];
 
 app.use(cors({
@@ -106,6 +99,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/admin/products', adminProductsRouter);
@@ -118,6 +114,11 @@ app.use('/api/directions', directionsRouter);
 app.use('/api/favorites', favoriteRouter);
 app.use('/api/chats', chatRouter);
 app.use('/api/chats', chatRoutes);
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
 
 // Root route for testing
 app.get('/', (req, res) => {
