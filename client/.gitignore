@@ -29,3 +29,5 @@ dist-ssr
 .vercel
 .env
 >>>>>>> e367c762c469855414863c4a57fd7cf888d820d4
+
+.vercel

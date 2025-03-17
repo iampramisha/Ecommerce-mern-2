@@ -16,7 +16,7 @@ export const fetchFavorites = createAsyncThunk(
   'auth/fetchFavorites',
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/favorites/getFavorite/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/favorites/getFavorite/${userId}`);
       console.log('Favorites API Response:', response.data); // Log the response
       return response.data.favorites; // Ensure this is an array
     } catch (error) {
