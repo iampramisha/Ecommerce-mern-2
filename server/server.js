@@ -100,8 +100,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
+app.use(express.static(path.join(__dirname, '../../client/dist')));
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/admin/products', adminProductsRouter);
