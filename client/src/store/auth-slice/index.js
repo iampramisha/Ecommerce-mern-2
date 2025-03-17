@@ -17,41 +17,45 @@ export const fetchFavorites = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/favorites/getFavorite/${userId}`);
-      
-      return response.data.favorites; // Assuming the response contains an array of favorite product IDs
+      console.log('Favorites API Response:', response.data); // Log the response
+      return response.data.favorites; // Ensure this is an array
     } catch (error) {
-      console.log(error);  // Log the error before rejecting
+      console.log(error);
       return rejectWithValue(error.response?.data || 'Failed to fetch favorites');
     }
   }
 );
-
 export const addToFavorites = createAsyncThunk(
   'user/addToFavorites',
   async ({ userId, productId }, { rejectWithValue }) => {
-      try {
-          const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/favorites/add`, { userId, productId }, {
-              withCredentials: true,
-          });
-          return response.data; // Assuming response includes updated favorites list
-      } catch (error) {
-          return rejectWithValue(error.response.data); // Return error message
-      }
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/favorites/add`,
+        { userId, productId },
+        { withCredentials: true }
+      );
+      console.log('Add to Favorites API Response:', response.data); // Log the response
+      return response.data.favorites; // Ensure this is an array
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
-// Async thunk for removing a product from favorites
 export const removeFromFavorites = createAsyncThunk(
   'user/removeFromFavorites',
   async ({ userId, productId }, { rejectWithValue }) => {
-      try {
-          const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/favorites/remove`, { userId, productId }, {
-              withCredentials: true,
-          });
-          return response.data; // Assuming response includes updated favorites list
-      } catch (error) {
-          return rejectWithValue(error.response.data); // Return error message
-      }
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/favorites/remove`,
+        { userId, productId },
+        { withCredentials: true }
+      );
+      console.log('Remove from Favorites API Response:', response.data); // Log the response
+      return response.data.favorites; // Ensure this is an array
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
