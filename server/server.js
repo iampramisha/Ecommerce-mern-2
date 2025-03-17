@@ -20,7 +20,13 @@ const directionsRouter = require('./routes/directions');
 const favoriteRouter = require('./routes/shop/favorite-routes');
 const chatRouter = require('./routes/shop/chat-routes');
 const chatRoutes = require('./routes/admin/chat-route'); // Import the chat routes
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
 // Log MongoDB URI for debugging
 console.log('MongoDB URI:', process.env.DATABASE_URL);
 
