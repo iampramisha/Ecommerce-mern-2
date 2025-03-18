@@ -410,7 +410,7 @@ export default function Address({ col, onSelect }) {
         <div className='mt-4'>
           {loading && <p>Loading shipping cost...</p>}
           {error && <p>Error fetching shipping cost: {error}</p>}
-          {shippingCost > 0 && <p>Shipping Cost: ${shippingCost}</p>}
+          {shippingCost > 0 && <p>Shipping Cost: Rs {shippingCost}</p>}
         </div>
       </div>
     </>

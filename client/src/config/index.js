@@ -1,48 +1,3 @@
-
-export const registerFormControls=[
-    {
-       name:'userName',
-       label:'User Name',
-       placeholder:'Enter your user name',
-  componentType:'input',
-  type:'text,'
-    },
-        {
-            name:'email',
-            label:'Email',
-            placeholder:'Enter your email',
-       componentType:'input',
-       type:'email,'
-         },
-         {
-            name:'password',
-            label:'password',
-            placeholder:'Enter your password',
-       componentType:'input',
-       type:'text,'
-         },
-    
-]
-
-export const loginFormControls=[
-
-        {
-            name:'email',
-            label:'Email',
-            placeholder:'Enter your email',
-       componentType:'input',
-       type:'email,'
-         },
-         {
-            name:'password',
-            label:'password',
-            placeholder:'Enter your password',
-       componentType:'input',
-       type:'text,'
-         },
-    
-]
-
 export const addProductFormElements = [
   {
     label: "Title",
@@ -104,13 +59,61 @@ export const addProductFormElements = [
     placeholder: "Enter total stock",
   },
   {
-    name: 'weight',
-    label: 'Weight (kg)',
-    componentType: 'input',
-    type: 'number',
-    placeholder: 'Enter weight of the product',
+    name: "weight",
+    label: "Weight (kg)",
+    componentType: "input",
+    type: "number",
+    placeholder: "Enter weight of the product",
+  },
+  {
+    name: "branches",
+    label: "Branches",
+    componentType: "dynamicBranches", // Add this field for branches
   },
 ];
+export const registerFormControls=[
+    {
+       name:'userName',
+       label:'User Name',
+       placeholder:'Enter your user name',
+  componentType:'input',
+  type:'text,'
+    },
+        {
+            name:'email',
+            label:'Email',
+            placeholder:'Enter your email',
+       componentType:'input',
+       type:'email,'
+         },
+         {
+            name:'password',
+            label:'password',
+            placeholder:'Enter your password',
+       componentType:'input',
+       type:'text,'
+         },
+    
+]
+
+export const loginFormControls=[
+
+        {
+            name:'email',
+            label:'Email',
+            placeholder:'Enter your email',
+       componentType:'input',
+       type:'email,'
+         },
+         {
+            name:'password',
+            label:'password',
+            placeholder:'Enter your password',
+       componentType:'input',
+       type:'text,'
+         },
+    
+]
 
 
 export const shoppingViewHeaderMenuItems = [

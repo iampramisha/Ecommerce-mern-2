@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductDetails } from '@/store/shop/products-slice'; // Correct import for fetchProductDetails
 import { Button } from '../ui/button';
-import { addToCart } from '@/store/shop/cart-slice';
+
 import { useToast } from '@/hooks/use-toast';
 export default function FavoriteComponent({ favoriteItems }) {
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ console.log("fetchedFva",fetchedProducts)
         <div className="overflow-y-auto max-h-[calc(100vh-100px)]">  {/* Wrapper with scrollable content */}
           <ul className="space-y-4">
           {fetchedProducts.map((item) => {
-        const product = item.payload.data; // Extract the product data from the payload
+        const product = item?.payload?.data; // Extract the product data from the payload
         return (
               <li key={product._id} className="flex items-center space-x-6 p-4 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
                 <div className="flex flex-col items-center space-y-2">

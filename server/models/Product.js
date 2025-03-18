@@ -47,6 +47,7 @@ const productSchema = new mongoose.Schema(
       type: String, // Added here within the schema fields
       required: true,
     },
+    branches: [String], // Array of strings
   },
   { timestamps: true } // Moved this outside the schema fields
 );

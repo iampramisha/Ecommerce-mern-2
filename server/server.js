@@ -8,7 +8,6 @@ const http = require('http');
 const { Server } = require('socket.io');
 const socketSetup = require('./socket-server'); // Import the socket server setup
 
-// Import routes
 const authRouter = require('./routes/auth/auth-routes');
 const adminProductsRouter = require('./routes/admin/products-route');
 const shopProductsRouter = require('./routes/shop/products-routes');
@@ -99,8 +98,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'dist')));
+// // Serve static files from the React app
+// app.use(express.static(path.join(__dirname, 'dist')));
 
 // Routes
 app.use('/api/auth', authRouter);
